@@ -12,6 +12,6 @@ Current milestone: **0 — Research and environment (in progress)**.
 | Custom compositor | Planned | No implementation |
 | GitHub repository | Blocked | Invalid GitHub CLI tokens |
 
-Known failures: Clippy initially found two style issues; fixed before final verification. The display manager login flow and NVIDIA rendering have not been tested. The preview session relies on Waybar and Wofi and is not yet the intended Neon user experience.
+Known failures: Clippy initially found two style issues, and piped CLI output exposed a broken pipe panic; both were fixed. The display manager login flow and NVIDIA rendering have not been tested. The preview session relies on Waybar and Wofi and is not yet the intended Neon user experience.
 
 Next engineering task: implement a native GTK4 layer-shell panel and Dock, then validate a real login to the isolated preview session.

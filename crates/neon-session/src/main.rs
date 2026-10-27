@@ -1,5 +1,6 @@
 use std::{
     env,
+    io::{self, Write},
     process::{Command, ExitCode},
 };
 
@@ -7,8 +8,16 @@ fn main() -> ExitCode {
     let mut args = env::args().skip(1);
     match args.next().as_deref() {
         Some("apps") => {
+            let stdout = io::stdout();
+            let mut output = stdout.lock();
             for app in neon_core::applications() {
-                println!("{}\t{}", app.id, app.name);
+                if let Err(error) = writeln!(output, "{}\t{}", app.id, app.name) {
+                    if error.kind() == io::ErrorKind::BrokenPipe {
+                        return ExitCode::SUCCESS;
+                    }
+                    eprintln!("could not write applications: {error}");
+                    return ExitCode::FAILURE;
+                }
             }
             ExitCode::SUCCESS
         }
