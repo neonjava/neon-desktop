@@ -9,6 +9,40 @@ pub struct Application {
     pub icon: Option<String>,
 }
 
+/// Rank installed applications for a keyboard-driven launcher.
+/// Exact names precede prefixes, word prefixes, and substring matches.
+pub fn search_applications<'a>(apps: &'a [Application], query: &str) -> Vec<&'a Application> {
+    let query = query.trim().to_lowercase();
+    if query.is_empty() {
+        return apps.iter().collect();
+    }
+    let mut matches: Vec<_> = apps
+        .iter()
+        .filter_map(|app| {
+            let name = app.name.to_lowercase();
+            let id = app.id.to_lowercase();
+            let score = if name == query {
+                0
+            } else if name.starts_with(&query) {
+                1
+            } else if name.split_whitespace().any(|word| word.starts_with(&query)) {
+                2
+            } else if name.contains(&query) {
+                3
+            } else if id.contains(&query) {
+                4
+            } else {
+                return None;
+            };
+            Some((score, app))
+        })
+        .collect();
+    matches.sort_by(|(a_score, a), (b_score, b)| {
+        a_score.cmp(b_score).then_with(|| a.name.cmp(&b.name))
+    });
+    matches.into_iter().map(|(_, app)| app).collect()
+}
+
 /// Discover visible applications using XDG data directories. User entries override system entries.
 pub fn applications() -> Vec<Application> {
     let mut dirs = vec![
@@ -103,5 +137,33 @@ mod tests {
     fn rejects_hidden_and_terminal() {
         assert!(parse_desktop_entry("[Desktop Entry]\nName=A\nExec=a\nHidden=true").is_none());
         assert!(parse_desktop_entry("[Desktop Entry]\nName=A\nExec=a\nTerminal=true").is_none());
+    }
+    #[test]
+    fn search_ranks_exact_and_word_prefix() {
+        let apps = vec![
+            Application {
+                id: "org.example.Photo.desktop".into(),
+                name: "Photo Editor".into(),
+                exec: "photo".into(),
+                icon: None,
+            },
+            Application {
+                id: "org.example.Editor.desktop".into(),
+                name: "Editor".into(),
+                exec: "editor".into(),
+                icon: None,
+            },
+            Application {
+                id: "org.example.Notes.desktop".into(),
+                name: "Notes Editor".into(),
+                exec: "notes".into(),
+                icon: None,
+            },
+        ];
+        let result = search_applications(&apps, "editor");
+        assert_eq!(
+            result.iter().map(|a| a.name.as_str()).collect::<Vec<_>>(),
+            vec!["Editor", "Notes Editor", "Photo Editor"]
+        );
     }
 }

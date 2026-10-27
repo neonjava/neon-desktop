@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Neon Desktop session wrapper
 set -euo pipefail
 config="${XDG_DATA_HOME:-$HOME/.local/share}/neon-desktop/hypr/neon.conf"
 if [[ ! -r "$config" ]]; then

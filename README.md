@@ -2,7 +2,7 @@
 
 A Rust-powered, macOS-inspired desktop environment for Linux. Beautiful by design, native by nature.
 
-**Status: early preview, milestone 0 in progress.** This repository currently provides a native Rust application index and launcher command, and a separate Hyprland session configuration. It does not yet have a Neon Dock, menu bar, settings, file manager, notification center, or custom compositor. Do not install it expecting a finished desktop.
+**Status: early preview, milestone 0 in progress.** This repository currently provides a native Rust application index and launcher command, and a separate Hyprland session configuration. Application search is available through `neon-session search QUERY`. It does not yet have a Neon Dock, menu bar, settings, file manager, notification center, or custom compositor. Do not install it expecting a finished desktop.
 
 ## Requirements
 
@@ -13,6 +13,7 @@ Fedora 44, Rust 1.99+, Hyprland, Waybar, Wofi, Hyprlock, GTK launch tools, and N
 ```sh
 cargo test --workspace
 cargo run -p neon-session -- apps
+cargo run -p neon-session -- search files
 cargo run -p neon-session -- launch org.gnome.Nautilus.desktop
 ./scripts/install.sh --dry-run
 ```

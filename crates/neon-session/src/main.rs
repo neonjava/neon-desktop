@@ -7,10 +7,16 @@ use std::{
 fn main() -> ExitCode {
     let mut args = env::args().skip(1);
     match args.next().as_deref() {
-        Some("apps") => {
+        Some("apps") | Some("search") => {
+            let query = args.next();
+            if args.next().is_some() {
+                eprintln!("unexpected argument");
+                return ExitCode::FAILURE;
+            }
             let stdout = io::stdout();
             let mut output = stdout.lock();
-            for app in neon_core::applications() {
+            let apps = neon_core::applications();
+            for app in neon_core::search_applications(&apps, query.as_deref().unwrap_or("")) {
                 if let Err(error) = writeln!(output, "{}\t{}", app.id, app.name) {
                     if error.kind() == io::ErrorKind::BrokenPipe {
                         return ExitCode::SUCCESS;
@@ -43,7 +49,7 @@ fn main() -> ExitCode {
             }
         }
         _ => {
-            eprintln!("usage: neon-session apps | launch APP.desktop");
+            eprintln!("usage: neon-session apps | search QUERY | launch APP.desktop");
             ExitCode::FAILURE
         }
     }
