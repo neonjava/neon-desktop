@@ -1,0 +1,3 @@
+# Neon Desktop agent guide
+
+Build a native Rust desktop for Fedora. Keep `main` buildable. Use focused crates and test real behavior. Never edit existing GNOME, KDE, or Hyprland configurations. The preview session owns separate files. Do not claim untested GUI behavior works. Run `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, and `cargo test --workspace` before committing. Update `docs/PROJECT_STATUS.md` after each change. Review `docs/ARCHITECTURE.md` and `docs/ROADMAP.md` to resume work. Use conventional commits and MIT-compatible dependencies and assets.

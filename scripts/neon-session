@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+config="${XDG_DATA_HOME:-$HOME/.local/share}/neon-desktop/hypr/neon.conf"
+if [[ ! -r "$config" ]]; then
+  echo "Neon session configuration missing: $config" >&2
+  exit 1
+fi
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_DESKTOP=neon
+exec Hyprland --config "$config"

@@ -1,0 +1,41 @@
+use std::{
+    env,
+    process::{Command, ExitCode},
+};
+
+fn main() -> ExitCode {
+    let mut args = env::args().skip(1);
+    match args.next().as_deref() {
+        Some("apps") => {
+            for app in neon_core::applications() {
+                println!("{}\t{}", app.id, app.name);
+            }
+            ExitCode::SUCCESS
+        }
+        Some("launch") => {
+            let Some(id) = args.next() else {
+                eprintln!("usage: neon-session launch APP.desktop");
+                return ExitCode::FAILURE;
+            };
+            if args.next().is_some() {
+                eprintln!("unexpected argument");
+                return ExitCode::FAILURE;
+            }
+            if !neon_core::applications().iter().any(|app| app.id == id) {
+                eprintln!("application not found: {id}");
+                return ExitCode::FAILURE;
+            }
+            match Command::new("gtk-launch").arg(&id).spawn() {
+                Ok(_) => ExitCode::SUCCESS,
+                Err(error) => {
+                    eprintln!("could not launch {id}: {error}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
+        _ => {
+            eprintln!("usage: neon-session apps | launch APP.desktop");
+            ExitCode::FAILURE
+        }
+    }
+}

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Neon Desktop (Preview)
+Comment=Neon Desktop experimental Hyprland session
+Exec=/usr/local/bin/neon-session-start
+Type=Application
+DesktopNames=Hyprland

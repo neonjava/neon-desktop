@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["crates/neon-core", "crates/neon-session"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
